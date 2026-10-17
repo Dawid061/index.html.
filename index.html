@@ -1,0 +1,211 @@
+<!doctype html><html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mapa Parafii</title><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Parafie"><meta name="theme-color" content="#1f4e79"><link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADYUlEQVR42u3d0XHUQBBFUTzlPCAiiAcHQD5kRCj8+csFu9ZI6u537veWVzN957UsjVYvX7///AJ8xDIFIAfIAXKAHCAHyAFygBwgB8gBkAPkADlADpAD5AA5QA6QA+QAyAFygBwgB8gBcoAcIAfIAXIA5AA58DyvyYP/8/vXIx/79uMtc35e0n726UEhiBIkx0EnMi0ZLsd2J6IsGSvHBVqMV2SgHBdrMViRxYwx3y45ehRmRoQsZoiQyXLUrMQAP3q3lRYF6NtiFjMc5zQ5es14Uz8WMxzz8P9WQI7eLbzdkS/z6/gnyDHjylKjUTjnQH85Jt3T6jKWZTaNSFvB0zS4t3L2IvvHvY8bv7oCuY8mPFKY98/M62sTkuOMqnx6vZY6GOcctZI87emmxQx+tJRjb4zvqutePyqfzaQkx96KhuTHYgY/+smxK2/Pq+Kuv1y2swxPjrPX9+z8cPkckXJcs6wHh0dROdIuV9ccr7aCPDmuTPupnUVygBwgB8gBcoAcIAfIAXIU58oL0lMv9ksOdJMjbZ93zfFOTo5r0n7wDWRtBalynL2sZ+87qStH/e279bdAS457/EjYq5ZyzrG3liG7GEvLUfPBw5oPaUqO++satfM57l/ZI9VN2xOf+7NPT+V5hWMgxw0r9cbfBCuuSOLPPg0+6XbOAXJ06MqzR7fMoHFpKxgqx7zwaDEiyYH+ckwKjy5jWebUKLQVTJeje3j0Ov5lfh25toIMOTqGR8dj7pocvea6aSvUVjBRji7Lse8ZtOTAUDnqL8rWF2baJ0fl2e9+yU5bwWg5ai7QAbcJhyRHtUrMuIGsrSBAjjqLdcy+JMmBDDkqLNlJ2xmnJce9tRm2S15bQZIcdy3feQ/XzEyO6+s08plNbQV5cnh1KDnur5nXlUNbER5iQ3KAHOcu7vFvDIpIjjOqmPAuKW0F8XLsXeghr6ALSo5dFc15OaG2AnJsWvRR7zSNS44j1U172622AnIcDoC02JAcIMfhGAiMjejkeLzemWZoKyDHgUiIjQ3J8Z/aJ5tBDpDjU+ERHhvkADmeDw+xQY6PbWAGOUCOJ8NDbLxT/V32kBwgB8gBcoAcIAdADpAD5AA5QA6QA+QAOUAOkAMgB8gBcoAcIAfIAXKAHCAHyIF4/gLKM/4w/eKpQQAAAABJRU5ErkJggg==">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<style>
+:root{--bg:#f6f5f2;--fg:#1d1d1b;--mut:#6b6a66;--card:#fff;--ln:#dcdad4;--ac:#1f4e79}
+@media(prefers-color-scheme:dark){:root{--bg:#161615;--fg:#eceae4;--mut:#9a988f;--card:#222220;--ln:#38372f;--ac:#7fb0dd}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font:15px/1.4 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+header{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--ln);background:var(--card)}
+header input{flex:1;min-width:0}
+input,select,textarea,button{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:8px}
+button{cursor:pointer}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+nav{display:flex;border-bottom:1px solid var(--ln);background:var(--card)}
+nav button{flex:1;border:0;border-radius:0;background:none;padding:10px 4px}
+nav button.on{border-bottom:3px solid var(--ac);font-weight:600}
+main{flex:1;position:relative;overflow:hidden}
+.v{position:absolute;inset:0;overflow:auto;padding:12px;display:none}.v.on{display:block}
+#v-map{padding:0}#map{height:100%}
+#flt{position:absolute;z-index:500;top:8px;left:8px;right:8px;max-width:420px;background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:8px}
+#flt summary{cursor:pointer;font-weight:600}
+#flt .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+#flt label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:2px}
+#cnt{margin:6px 0 0;font-size:12px;color:var(--mut)}
+#pn{position:absolute;z-index:600;left:0;right:0;bottom:0;max-height:62%;overflow:auto;background:var(--card);border-top:1px solid var(--ln);border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));display:none}
+@media(min-width:800px){#pn{left:auto;width:400px;top:0;max-height:none;border-radius:0;border-left:1px solid var(--ln)}}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.row button{flex:1;min-width:46%}
+.it{padding:10px;border:1px solid var(--ln);border-radius:10px;background:var(--card);margin-bottom:8px;cursor:pointer}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.m{color:var(--mut);font-size:13px}.warn{color:#b45309}
+.bar{height:8px;background:var(--ln);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.pin{width:18px;height:18px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 3px #0008}
+textarea{width:100%}
+button,select,input:not([type=checkbox]){min-height:44px}
+</style></head><body>
+<header><input id="q" type="search" placeholder="Parafia, miejscowość, adres, diecezja…"><button id="loc" title="Moja lokalizacja">📍</button></header>
+<nav id="nav"><button data-v="map" class="on">Mapa</button><button data-v="list">Lista</button><button data-v="stat">Statystyki</button><button data-v="data">Dane</button></nav>
+<main>
+<section class="v on" id="v-map"><div id="map"></div>
+<details id="flt"><summary>Filtry <span id="cnt"></span></summary><div class="row"><button id="pre">Dziś 16–18 · nieodwiedzone · 30 km</button><button id="clr">Wyczyść</button></div><div class="g">
+<label>Dzień<select id="fd"><option value="">dowolny</option><option value="today">dzisiaj</option><option value="1">poniedziałek</option><option value="2">wtorek</option><option value="3">środa</option><option value="4">czwartek</option><option value="5">piątek</option><option value="6">sobota</option><option value="0">niedziela</option></select></label>
+<label>Status<select id="fs"><option value="">wszystkie</option><option value="none">Nieodwiedzona</option><option value="visited">Odwiedzona</option><option value="office">Kancelaria odwiedzona</option><option value="again">Do ponownej wizyty</option></select></label>
+<label>Od godz.<input id="ft1" type="time"></label><label>Do godz.<input id="ft2" type="time"></label>
+<label>Diecezja<select id="fdi"><option value="">wszystkie</option></select></label>
+<label>Województwo<select id="fw"><option value="">wszystkie</option></select></label>
+<label>Promień (km)<input id="fr" type="number" min="1" placeholder="od 📍 lub środka mapy"></label>
+<label>Min. wiarygodność<select id="fc"><option value="0">każda (test)</option><option value="1">niezweryfikowane</option><option value="2">zweryfikowane</option></select></label>
+<label style="grid-column:span 2;flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="fnd" checked> pokaż „Brak danych” o godzinach (nie oznacza zamknięcia)</label>
+</div></details>
+<div id="pn"></div></section>
+<section class="v" id="v-list"></section>
+<section class="v" id="v-stat"></section>
+<section class="v" id="v-data">
+<p id="stale" class="m"></p>
+<p><button class="p" id="osm" style="width:100%;padding:12px">Pobierz kościoły z OpenStreetMap (cała Polska)</button><span id="osmres" class="m"></span></p>
+<p><b>Import CSV / GeoJSON</b><br><span class="m">CSV: nagłówki <code>name,parish,lat,lon,city,gmina,voivodeship,diocese,address,website,phone,email,type,osm_id,source,office_hours</code>. Godziny: <code>pn 16:00-18:00; wt 9-11,16-18; nd zamknięte</code>.</span></p>
+<input type="file" id="imp" accept=".csv,.geojson,.json"><p id="impres" class="m"></p>
+<p><b>Eksport</b></p><div class="row"><button id="exp">Kopia wizyt (JSON)</button><button id="rst">Wróć do zbioru testowego</button></div>
+<p class="m">Parafie są w IndexedDB tej przeglądarki, wizyty w localStorage. Na iPhonie dodaj stronę do ekranu początkowego i pobieraj dane już w tej aplikacji (Safari i ikona mają osobną pamięć). Kopia wizyt przenosi postępy między urządzeniami (wczytujesz ją tym samym polem importu). Zbiór testowy znika po pobraniu z OSM.</p></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script>
+const today=()=>{const n=new Date();return new Date(n-n.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const $=s=>document.querySelector(s),DAYS=['nd','pn','wt','śr','cz','pt','sb'];
+const ST={none:['Nieodwiedzona','#8a8a85'],visited:['Odwiedzona','#2e8b57'],office:['Kancelaria odwiedzona','#1f6fb5'],again:['Do ponownej wizyty','#d9822b']};
+const CONF=['test','niezweryfikowane','zweryfikowane'];
+const seed=()=>[
+["Katedra Poznańska","Parafia Katedralna","Poznań","wielkopolskie","archidiecezja poznańska",52.4115,16.9473,"katedra"],
+["Fara Poznańska","Parafia Farna","Poznań","wielkopolskie","archidiecezja poznańska",52.4054,16.9331,"parafialny"],
+["Katedra w Gnieźnie","Parafia Katedralna","Gniezno","wielkopolskie","archidiecezja gnieźnieńska",52.5348,17.5953,"katedra"],
+["Sanktuarium Jasna Góra","Parafia Jasnogórska","Częstochowa","śląskie","archidiecezja częstochowska",50.8118,19.0970,"sanktuarium"],
+["Bazylika Mariacka","Parafia Mariacka","Kraków","małopolskie","archidiecezja krakowska",50.0617,19.9392,"parafialny"],
+["Katedra Wawelska","Parafia Katedralna","Kraków","małopolskie","archidiecezja krakowska",50.0545,19.9354,"katedra"],
+["Archikatedra św. Jana","Parafia Archikatedralna","Warszawa","mazowieckie","archidiecezja warszawska",52.2488,21.0143,"katedra"],
+["Bazylika Mariacka","Parafia Mariacka","Gdańsk","pomorskie","archidiecezja gdańska",54.3492,18.6531,"parafialny"],
+["Katedra św. Jana Chrzciciela","Parafia Katedralna","Wrocław","dolnośląskie","archidiecezja wrocławska",51.1147,17.0459,"katedra"]
+].map((r,i)=>({id:'test'+i,name:r[0],parish:r[1],city:r[2],voivodeship:r[3],diocese:r[4],lat:r[5],lon:r[6],type:r[7],
+ office:i%3==2?null:{1:[["09:00","11:00"],["16:00","18:00"]],3:[["16:00","17:30"]],5:[["09:00","11:00"]]},exceptions:{},
+ conf:0,source:"zbiór testowy (godziny wymyślone)",verified:null,osm_id:null,address:"",website:"",phone:"",email:""}));
+let S={parishes:[],visits:JSON.parse(localStorage.mp_visits||'{}')};
+const idb=(m,k,v)=>new Promise((ok,no)=>{const r=indexedDB.open('mp',1);r.onupgradeneeded=()=>r.result.createObjectStore('s');r.onsuccess=()=>{const t=r.result.transaction('s',m==='get'?'readonly':'readwrite'),st=t.objectStore('s'),q=m==='get'?st.get(k):st.put(v,k);t.oncomplete=()=>ok(q.result);t.onerror=()=>no(t.error)};r.onerror=()=>no(r.error)});
+const saveV=()=>{for(const k in S.visits){const v=S.visits[k];if(v.status==='none'&&!v.note&&!v.hist.length)delete S.visits[k]}localStorage.mp_visits=JSON.stringify(S.visits)};
+const saveP=()=>idb('put','parishes',S.parishes);
+const save=()=>{saveV();saveP()};
+const NONE={status:'none',hist:[],note:''};
+const V=id=>S.visits[id]||NONE;
+const Vw=id=>S.visits[id]||(S.visits[id]={status:'none',hist:[],note:''});
+let tmr;const rf=()=>{clearTimeout(tmr);tmr=setTimeout(refresh,250)};
+// hours
+const tm=s=>{const m=/^(\d{1,2})(?::(\d{2}))?$/.exec(s.trim());return m?+m[1]*60+(+m[2]||0):null};
+function parseHours(t){if(!t||!t.trim())return null;const o={};for(const p of t.split(';')){const m=/^\s*(nd|pn|wt|śr|cz|pt|sb)\s+(.+)$/i.exec(p);if(!m)continue;const d=DAYS.indexOf(m[1].toLowerCase());
+ o[d]=/zamkn/i.test(m[2])?[]:m[2].split(',').map(x=>x.split(/[-–]/).map(y=>y.trim())).filter(x=>x.length==2&&tm(x[0])!=null&&tm(x[1])!=null)}return Object.keys(o).length?o:null}
+function parseExc(t){const o={};for(const x of (t||'').split(';')){const m=/^\s*(\d{4}-\d{2}-\d{2})\s+(.+)$/.exec(x);if(!m)continue;o[m[1]]=/zamkn/i.test(m[2])?[]:m[2].split(',').map(y=>y.split(/[-–]/).map(z=>z.trim())).filter(y=>y.length==2&&tm(y[0])!=null&&tm(y[1])!=null)}return o}
+const fmtExc=o=>Object.entries(o||{}).sort().map(([d,v])=>d+' '+(v.length?v.map(y=>y.join('–')).join(', '):'zamknięte')).join('; ');
+const fmtH=o=>o?Object.keys(o).sort((a,b)=>(a||7)-(b||7)).map(d=>DAYS[d]+' '+(o[d].length?o[d].map(x=>x.join('–')).join(', '):'zamknięte')).join('; '):'';
+function slots(p,d,date){if(p.exceptions&&p.exceptions[date])return p.exceptions[date];return p.office?(p.office[d]||[]):null}
+// returns true / false / null (brak danych)
+function openAll(p,d,date,a,b){if(!p.office)return null;const sl=slots(p,d,date);if(!sl)return false;
+ if(a==null&&b==null)return sl.length>0;a=a??0;b=b??1440;return sl.some(x=>tm(x[0])<=a&&tm(x[1])>=b)}
+// geo
+const hav=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+let me=null;
+// map
+const map=L.map('map',{zoomControl:false,preferCanvas:true}).setView([52.1,19.4],6);
+L.control.zoom({position:'bottomleft'}).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">Współtwórcy OpenStreetMap</a>'}).addTo(map);
+const cl=L.markerClusterGroup({chunkedLoading:true,maxClusterRadius:50}).addTo(map);
+const icon=c=>L.divIcon({className:'',html:`<div class="pin" style="background:${c}"></div>`,iconSize:[18,18]});
+let cur=[];
+function filtered(){const q=$('#q').value.trim().toLowerCase(),fd=$('#fd').value,a=tm($('#ft1').value||'x'),b=tm($('#ft2').value||'x'),
+ fs=$('#fs').value,di=$('#fdi').value,fw=$('#fw').value,r=+$('#fr').value,cf=+$('#fc').value,nd=$('#fnd').checked;
+ const now=new Date(),day=fd===''?null:fd==='today'?now.getDay():+fd,date=today();
+ const c=me||map.getCenter(),cl_=me?[me.lat,me.lng]:[c.lat,c.lng];
+ return S.parishes.filter(p=>{
+  if(q&&![p.name,p.parish,p.city,p.address,p.diocese,p.voivodeship].join(' ').toLowerCase().includes(q))return false;
+  if(fs&&V(p.id).status!==fs)return false;if(di&&p.diocese!==di)return false;if(fw&&p.voivodeship!==fw)return false;
+  if(p.conf<cf)return false;
+  if(r&&hav(cl_[0],cl_[1],p.lat,p.lon)>r)return false;
+  if(day!==null||a!=null||b!=null){const dd=day??now.getDay(),res=openAll(p,dd,fd==='today'||day===null?date:'',a,b);
+   if(res===null)return nd;return res}
+  return true})}
+function refresh(){cur=filtered();cl.clearLayers();
+ cl.addLayers(cur.map(p=>L.circleMarker([p.lat,p.lon],{radius:8,color:'#fff',weight:2,fillColor:ST[V(p.id).status][1],fillOpacity:1}).on('click',()=>show(p.id))));
+ $('#cnt').textContent=`(${cur.length}/${S.parishes.length})`;renderList();if($('#v-stat').classList.contains('on'))renderStats()}
+function opts(){for(const [k,id] of [['diocese','#fdi'],['voivodeship','#fw']]){const s=$(id),v=s.value;
+ s.innerHTML='<option value="">wszystkie</option>'+[...new Set(S.parishes.map(p=>p[k]).filter(Boolean))].sort().map(x=>`<option>${x}</option>`).join('');s.value=v}}
+// panel
+function show(id){const p=S.parishes.find(x=>x.id==id),v=Vw(id),pn=$('#pn');pn.style.display='block';
+ const hrs=p.office?fmtH(p.office):'<span class="warn">Brak danych o godzinach kancelarii</span>';
+ pn.innerHTML=`<div style="display:flex;justify-content:space-between"><b>${esc(p.name)}</b><button id="x">✕</button></div>
+ <div class="m">${esc(p.parish||'')} · ${esc(p.type||'')}<br>${esc([p.address,p.city,p.voivodeship].filter(Boolean).join(', '))}<br>${esc(p.diocese||'')}</div>
+ <p><b>Kancelaria:</b> ${hrs}<br><span class="m">Wiarygodność: ${CONF[p.conf]} · źródło: ${esc(p.source||'brak')}${p.verified?' · '+p.verified:''}</span></p>
+ <div class="row">${Object.entries(ST).map(([k,[n,c]])=>`<button data-s="${k}" ${v.status==k?'class="p"':''}><span class="dot" style="background:${c}"></span>${n}</button>`).join('')}</div>
+ <label class="m">Data wizyty<input type="date" id="vd" value="${today()}" style="width:100%"></label>
+ <label class="m">Prywatna notatka<textarea id="nt" rows="3">${esc(v.note)}</textarea></label>
+ <div class="m">${v.hist.length?'Historia: '+v.hist.map(h=>`${h.d} – ${ST[h.s][0]}`).join('; '):'Brak historii wizyt'}</div>
+ <label class="m">Edytuj godziny kancelarii (np. pn 16:00-18:00; wt 9-11,16-18)<input id="eh" style="width:100%" value="${esc(fmtH(p.office))}"></label>
+ <label class="m">Wyjątki (np. 2026-12-24 zamknięte; 2026-12-31 9-12)<input id="ex" style="width:100%" value="${esc(fmtExc(p.exceptions))}"></label>
+ <div class="row"><button class="p" id="sv">Zapisz</button><a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}" target="_blank" rel="noopener" style="flex:1"><button style="width:100%">Nawiguj</button></a></div>
+ <a href="https://www.google.com/search?q=${encodeURIComponent('kancelaria parafialna '+p.name+' '+(p.city||'')+' godziny')}" target="_blank" rel="noopener">Godziny kancelarii (Google)</a> ${p.website?`<a href="${esc(p.website)}" target="_blank" rel="noopener">Strona WWW</a> `:''}${p.phone?`<a href="tel:${esc(p.phone)}">${esc(p.phone)}</a>`:''}`;
+ $('#x').onclick=()=>pn.style.display='none';
+ pn.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{v.status=b.dataset.s;v.hist.push({d:$('#vd').value,s:v.status});v.note=$('#nt').value;saveV();refresh();show(id)});
+ $('#sv').onclick=()=>{v.note=$('#nt').value;const h=parseHours($('#eh').value);p.office=h;p.exceptions=parseExc($('#ex').value);if(h){p.conf=Math.max(p.conf,1);p.source=(p.source&&!p.source.includes('ręcznie')?p.source+'; ':'')+'poprawione ręcznie';p.verified=today()}save();refresh();show(id)};
+ map.panTo([p.lat,p.lon])}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderList(){const c=me||map.getCenter(),la=me?me.lat:c.lat,lo=me?me.lng:c.lng;
+ const a=cur.map(p=>[p,hav(la,lo,p.lat,p.lon)]).sort((x,y)=>x[0]===y[0]?0:x[1]-y[1]).slice(0,300);
+ $('#v-list').innerHTML=`<p class="m">${cur.length} wyników · od najbliższych ${me?'(do Ciebie)':'(do środka mapy)'}</p>`+a.map(([p,d])=>`<div class="it" data-id="${p.id}"><span class="dot" style="background:${ST[V(p.id).status][1]}"></span><b>${esc(p.name)}</b> <span class="m">${d.toFixed(1)} km</span><div class="m">${esc(p.city||'')} · ${p.office?'godziny: '+CONF[p.conf]:'brak danych o godzinach'}</div></div>`).join('')+(cur.length>300?'<p class="m">Pokazano 300 najbliższych — zawęź filtry.</p>':'');
+ document.querySelectorAll('.it').forEach(e=>e.onclick=()=>{go('map');show(e.dataset.id)})}
+function renderStats(){const P=S.parishes,n=P.length,vis=P.filter(p=>V(p.id).status!='none').length,off=P.filter(p=>V(p.id).status=='office').length;
+ const grp=k=>{const m={};P.forEach(p=>{const g=p[k]||'(brak)';m[g]=m[g]||[0,0];m[g][0]++;if(V(p.id).status!='none')m[g][1]++});return Object.entries(m).sort().map(([g,[t,v]])=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${esc(g)}</span><span class="m">${v}/${t}</span></div><div class="bar"><i style="width:${t?v/t*100:0}%"></i></div></div>`).join('')};
+ $('#v-stat').innerHTML=`<h3 style="margin-top:0">${vis} / ${n} (${n?(vis/n*100).toFixed(1):0}%)</h3><p class="m">Wszystkie w bazie: ${n} · odwiedzone: ${vis} · kancelarie odwiedzone: ${off}<br>Liczone z rzeczywistych rekordów zaimportowanej bazy — to nie jest cała Polska.</p><h4>Województwa</h4>${grp('voivodeship')}${P.some(p=>p.diocese)?'<h4>Diecezje</h4>'+grp('diocese'):''}`}
+// import
+let OI=null;
+const dedupe=rec=>{if(!OI){OI=new Map();S.parishes.forEach((p,i)=>p.osm_id&&OI.set(p.osm_id,i))}
+ let i=rec.osm_id&&OI.has(rec.osm_id)?OI.get(rec.osm_id):-1;
+ if(i<0&&!rec.osm_id)i=S.parishes.findIndex(p=>p.name.toLowerCase()==rec.name.toLowerCase()&&hav(p.lat,p.lon,rec.lat,rec.lon)<0.05);
+ if(i<0){S.parishes.push(rec);if(rec.osm_id)OI.set(rec.osm_id,S.parishes.length-1);return'n'}
+ const o=S.parishes[i];for(const k in rec){if(!rec[k]||['id','conf','source','office','exceptions'].includes(k))continue;o[k]=rec[k]}
+ if(rec.office&&!o.office){o.office=rec.office;o.conf=Math.max(o.conf,rec.conf)}return'u'};
+function mk(o){const lat=+o.lat,lon=+o.lon;if(!o.name||isNaN(lat)||isNaN(lon))return null;
+ return{id:o.osm_id?'osm'+o.osm_id:'i'+Math.random().toString(36).slice(2,10),name:o.name,parish:o.parish||'',city:o.city||'',gmina:o.gmina||'',voivodeship:o.voivodeship||'',diocese:o.diocese||'',lat,lon,type:o.type||'kościół',
+ address:o.address||'',website:o.website||'',phone:o.phone||'',email:o.email||'',osm_id:o.osm_id||null,office:parseHours(o.office_hours),exceptions:{},conf:o.office_hours?1:0,source:o.source||'import',verified:null}}
+function csv(t){const rows=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'&&t[i+1]=='"'){c+='"';i++}else if(ch=='"')q=false;else c+=ch}else if(ch=='"')q=true;else if(ch==','){r.push(c);c=''}else if(ch=='\n'){r.push(c);rows.push(r);r=[];c=''}else if(ch!='\r')c+=ch}if(c||r.length){r.push(c);rows.push(r)}
+ const h=rows.shift().map(x=>x.trim());return rows.filter(r=>r.length>1).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])))}
+$('#imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();let items;
+ try{if(/\.csv$/i.test(f.name))items=csv(t);else{const g=JSON.parse(t);if(g.visits&&!g.features){Object.assign(S.visits,g.visits);saveV();refresh();$('#impres').textContent='Wczytano kopię wizyt: '+Object.keys(g.visits).length;return}items=(g.features||[]).map(x=>{const p=x.properties||{},c=x.geometry?.type=='Point'?x.geometry.coordinates:null;
+  return{...p,name:p.name||p['name:pl'],lon:c?.[0],lat:c?.[1],osm_id:p['@id']||x.id||p.osm_id,city:p['addr:city']||p.city,address:[p['addr:street'],p['addr:housenumber']].filter(Boolean).join(' ')||p.address,website:p.website,phone:p.phone,diocese:p.diocese||p.operator,office_hours:p.office_hours,source:p.source||'OpenStreetMap'}})}}
+ catch(err){$('#impres').textContent='Błąd pliku: '+err.message;return}
+ OI=null;let n=0,u=0,s=0;for(const it of items){const r=mk(it);if(!r){s++;continue}dedupe(r)=='n'?n++:u++}
+ save();opts();refresh();$('#impres').textContent=`Dodano: ${n}, zaktualizowano: ${u}, pominięto (brak nazwy/współrzędnych): ${s}`};
+$('#exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({visits:S.visits},null,1)],{type:'application/json'}));a.download='wizyty-parafii.json';a.click()};
+$('#rst').onclick=()=>{if(confirm('Usunąć wszystkie dane i wizyty, wrócić do zbioru testowego?')){S={parishes:seed(),visits:{}};OI=null;localStorage.removeItem('mp_osm');save();staleCheck();opts();refresh()}};
+// ui
+function go(v){document.querySelectorAll('.v').forEach(e=>e.classList.toggle('on',e.id=='v-'+v));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));if(v=='stat')renderStats();if(v=='map')setTimeout(()=>map.invalidateSize(),50)}
+$('#nav').onclick=e=>e.target.dataset.v&&go(e.target.dataset.v);
+$('#loc').onclick=()=>navigator.geolocation?.getCurrentPosition(p=>{me=L.latLng(p.coords.latitude,p.coords.longitude);map.setView(me,11);refresh()},()=>alert('Brak dostępu do lokalizacji.'));
+const FK=['q','fd','ft1','ft2','fs','fdi','fw','fr','fc'];
+try{const f=JSON.parse(localStorage.mp_f||'{}');FK.forEach(k=>{if(f[k]!=null)$('#'+k).value=f[k]});if(f.nd===false)$('#fnd').checked=false}catch(e){}
+
+document.querySelectorAll('#flt input,#flt select,#q').forEach(e=>e.oninput=()=>{const f={nd:$('#fnd').checked};FK.forEach(k=>f[k]=$('#'+k).value);localStorage.mp_f=JSON.stringify(f);rf()});
+map.on('moveend',()=>{if(!me&&$('#fr').value)rf()});
+
+$('#clr').onclick=()=>{FK.forEach(k=>$('#'+k).value=k=='fc'?'0':'');$('#fnd').checked=true;$('#fd').dispatchEvent(new Event('input'))};
+$('#pre').onclick=()=>{$('#fd').value='today';$('#ft1').value='16:00';$('#ft2').value='18:00';$('#fs').value='none';$('#fr').value=30;$('#fnd').checked=true;if(!me)$('#loc').click();$('#fd').dispatchEvent(new Event('input'))};
+const WOJ=[['dolnośląskie','DS'],['kujawsko-pomorskie','KP'],['lubelskie','LU'],['lubuskie','LB'],['łódzkie','LD'],['małopolskie','MA'],['mazowieckie','MZ'],['opolskie','OP'],['podkarpackie','PK'],['podlaskie','PD'],['pomorskie','PM'],['śląskie','SL'],['świętokrzyskie','SK'],['warmińsko-mazurskie','WN'],['wielkopolskie','WP'],['zachodniopomorskie','ZP']];
+$('#osm').onclick=async()=>{const out=$('#osmres');if(!confirm('Pobrać kościoły katolickie z OpenStreetMap dla całej Polski? Potrwa kilka minut, nie zamykaj karty.'))return;
+ S.parishes=S.parishes.filter(p=>!p.id.startsWith('test'));OI=null;let n=0,u=0,fail=[];
+ for(let i=0;i<WOJ.length;i++){const [w,c]=WOJ[i];out.textContent=`Pobieranie: ${w} (${i+1}/16)…`;
+  const q=`[out:json][timeout:180];area["ISO3166-2"="PL-${c}"]->.a;nwr["amenity"="place_of_worship"]["religion"="christian"]["denomination"~"roman_catholic|catholic"](area.a);out center tags;`;
+  try{const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+   if(!r.ok)throw new Error(r.status);const j=await r.json();
+   for(const e of j.elements){const t=e.tags||{},lat=e.lat??e.center?.lat,lon=e.lon??e.center?.lon;
+    const rec=mk({name:t.name||('Kościół (bez nazwy) – '+(t['addr:city']||'?')),lat,lon,osm_id:e.type+'/'+e.id,city:t['addr:city']||t['addr:place'],voivodeship:w,diocese:t.diocese,type:t.building=='chapel'?'kaplica':'kościół',address:[t['addr:street'],t['addr:housenumber']].filter(Boolean).join(' '),website:t.website||t['contact:website'],phone:t.phone||t['contact:phone'],source:'OpenStreetMap '+today()});
+    if(rec)dedupe(rec)=='n'?n++:u++}
+  }catch(err){fail.push(w)}
+  await new Promise(r=>setTimeout(r,1500))}
+ await saveP();if(n+u>0)localStorage.mp_osm=Date.now();staleCheck();opts();refresh();out.textContent=`Gotowe: nowych ${n}, zaktualizowanych ${u}. W bazie: ${S.parishes.length}.`+(fail.length?` Nie udało się: ${fail.join(', ')} — kliknij ponownie.`:'')};
+function staleCheck(){const t=+localStorage.mp_osm||0,d=t?Math.floor((Date.now()-t)/864e5):null,el=$('#stale'),bad=d==null||d>182;
+ el.textContent=d==null?'Dane z OSM nie zostały jeszcze pobrane (zbiór testowy).':d>182?`Dane z OSM mają ${d} dni — pobierz ponownie (godziny i wizyty zostają).`:`Ostatnie pobranie z OSM: ${d} dni temu.`;
+ el.className=bad?'warn':'m';document.querySelector('[data-v=data]').textContent=bad?'Dane ⚠':'Dane'}
+try{const mf={name:'Mapa Parafii',short_name:'Parafie',start_url:location.href,display:'standalone',background_color:'#1f4e79',theme_color:'#1f4e79',icons:[{src:document.querySelector('link[rel=apple-touch-icon]').href,sizes:'180x180',type:'image/png'}]};
+ const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));document.head.appendChild(l)}catch(e){}
+(async()=>{let old=null;try{old=JSON.parse(localStorage.mp_data||'null')}catch(e){}
+ S.parishes=(await idb('get','parishes').catch(()=>null))||old?.parishes||seed();
+ if(old&&!localStorage.mp_visits){S.visits=old.visits||{};saveV()}
+ opts();try{const f=JSON.parse(localStorage.mp_f||'{}');['fdi','fw'].forEach(k=>{if(f[k])$('#'+k).value=f[k]})}catch(e){}
+ staleCheck();refresh()})();
+</script></body></html>
